@@ -1,4 +1,4 @@
-Part of Android Development - ISMIN 2020
+Part of Android Development - ISMIN
 
 Course followed by students of Mines St Etienne, ISMIN - M2 Computer Science.
 
@@ -20,7 +20,7 @@ Then:
 - Do the same for all RecyclerView related logic
 
 In `MainActivity`:
-- Add a `<RelativeLayout>` in the layout
+- Add a `<ConstraintLayout>` in the layout
 - Add some code to create a `BookListFragment` fragment and display it
 
 Then:
@@ -38,3 +38,5 @@ Then:
 That's it! You can code!
 
 ## 🛰 Extra
+
+No extra this time!
