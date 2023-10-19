@@ -6,23 +6,17 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
     private val bookshelf = Bookshelf()
-    private lateinit var bookAdapter: BookAdapter
-    private lateinit var recyclerView: RecyclerView
 
     private val startForResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 val book = it.data?.getSerializableExtra(CREATED_BOOK) as Book
                 bookshelf.addBook(book)
-                bookAdapter.updateBooks(bookshelf.getAllBooks())
             }
         }
 
@@ -32,21 +26,21 @@ class MainActivity : AppCompatActivity() {
 
         initData()
 
-        recyclerView = findViewById(R.id.a_main_rcv_books)
-        bookAdapter = BookAdapter(bookshelf.getAllBooks())
-        recyclerView.adapter = bookAdapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
-            )
-        )
+        displayListFragment()
 
         findViewById<FloatingActionButton>(R.id.a_main_btn_create_book).setOnClickListener {
             val intent = Intent(this, CreateBookActivity::class.java)
             startForResult.launch(intent)
         }
+    }
+
+    private fun displayListFragment() {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(
+            R.id.a_main_lyt_fragment,
+            BookListFragment.newInstance(bookshelf.getAllBooks())
+        )
+        transaction.commit()
     }
 
     private fun initData() {
@@ -68,12 +62,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.action_delete -> {
                 bookshelf.clear()
-                bookAdapter.updateBooks(bookshelf.getAllBooks())
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

@@ -20,9 +20,9 @@ class Bookshelf {
         return book
     }
 
-    fun getAllBooks(): List<Book> {
-        return storage.values
-            .sortedBy { book -> book.title }
+    fun getAllBooks(): ArrayList<Book> {
+        return  ArrayList(storage.values
+            .sortedBy { book -> book.title })
     }
 
     fun getBooksOf(author: String): List<Book> {
