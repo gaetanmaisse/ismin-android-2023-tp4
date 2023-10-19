@@ -1,24 +1,19 @@
 package com.ismin.android
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.result.contract.ActivityResultContracts
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BookCreator {
 
     private val bookshelf = Bookshelf()
 
-    private val startForResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) {
-                val book = it.data?.getSerializableExtra(CREATED_BOOK) as Book
-                bookshelf.addBook(book)
-            }
-        }
+    private val floatingActionButton: FloatingActionButton by lazy {
+        findViewById(R.id.a_main_btn_create_book)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +23,8 @@ class MainActivity : AppCompatActivity() {
 
         displayListFragment()
 
-        findViewById<FloatingActionButton>(R.id.a_main_btn_create_book).setOnClickListener {
-            val intent = Intent(this, CreateBookActivity::class.java)
-            startForResult.launch(intent)
+        floatingActionButton.setOnClickListener {
+            displayCreateBookFragment()
         }
     }
 
@@ -41,6 +35,17 @@ class MainActivity : AppCompatActivity() {
             BookListFragment.newInstance(bookshelf.getAllBooks())
         )
         transaction.commit()
+        floatingActionButton.visibility = View.VISIBLE
+    }
+
+    private fun displayCreateBookFragment() {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(
+            R.id.a_main_lyt_fragment,
+            CreateBookFragment()
+        )
+        transaction.commit()
+        floatingActionButton.visibility = View.GONE
     }
 
     private fun initData() {
@@ -70,5 +75,10 @@ class MainActivity : AppCompatActivity() {
 
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onBookCreated(book: Book) {
+        bookshelf.addBook(book)
+        displayListFragment()
     }
 }
